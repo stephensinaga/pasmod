@@ -31,7 +31,7 @@
 
     <!-- Template Main CSS File -->
     <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
-    <link rel="icon" href="{{ asset('assets/img/logo_bn.png')}}" type="image/png">
+    <link rel="icon" href="{{ asset('assets/img/lgobbn.png')}}" type="image/png">
     <style>
         body {
             padding-top: 70px;

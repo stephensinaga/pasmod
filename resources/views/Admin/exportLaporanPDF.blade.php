@@ -24,27 +24,27 @@
 </head>
 
 <body>
-    <h1>Laporan Penjualan</h1>
+    <h1>Sales Report</h1>
 
     @foreach ($mainOrders as $mainOrder)
-        <h2>Pesanan Utama #{{ $mainOrder->id }}</h2>
-        <p>Kasir: {{ $mainOrder->cashier }}</p>
-        <p>Pelanggan: {{ $mainOrder->customer }}</p>
-        <p>Total Keseluruhan: {{ $mainOrder->grandtotal }}</p>
+        <h2>Main Order #{{ $mainOrder->id }}</h2>
+        <p>Cashier: {{ $mainOrder->cashier }}</p>
+        <p>Customer: {{ $mainOrder->customer }}</p>
+        <p>Grand Total: {{ $mainOrder->grandtotal }}</p>
         @if ($mainOrder->payment == 'cash')
-            <p>Tunai: {{ $mainOrder->cash }}</p>
-            <p>Kembalian: {{ $mainOrder->changes }}</p>
+            <p>Cash: {{ $mainOrder->cash }}</p>
+            <p>Change: {{ $mainOrder->changes }}</p>
         @endif
-        <p>Metode Pembayaran: {{ ucfirst($mainOrder->payment) }}</p>
+        <p>Payment Method: {{ ucfirst($mainOrder->payment) }}</p>
 
         <table>
             <thead>
                 <tr>
-                    <th>Nama Produk</th>
-                    <th>Kode Produk</th>
-                    <th>Kategori</th>
-                    <th>Jumlah</th>
-                    <th>Harga</th>
+                    <th>Product Name</th>
+                    <th>Product Code</th>
+                    <th>Category</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
                 </tr>
             </thead>
             <tbody>

@@ -185,31 +185,54 @@ class CashierController extends Controller
         return back();
     }
 
-    public function MinOrderItem($id)
+    // public function MinOrderItem($id)
+    // {
+    //     $product = Order::where('id', $id)->first();
+
+    //     if ($product) {
+    //         $product->qty -= 1;
+
+    //         if ($product->qty <= 0) {
+    //             $product->delete();
+    //         } else {
+    //             $product->save();
+    //         }
+    //     }
+    //     return redirect()->route('CashierView');
+    // }
+
+    // public function AddOrderItem($id)
+    // {
+    //     $product = Order::where('id', $id)->first();
+
+    //     if ($product) {
+    //         $product->qty += 1;
+    //         $product->save();
+    //     }
+    //     return redirect()->route('CashierView');
+    // }
+
+    public function updateOrderItem(Request $request, $id)
     {
         $product = Order::where('id', $id)->first();
 
         if ($product) {
-            $product->qty -= 1;
+            // Mengambil kuantitas baru dari request
+            $newQty = (int) $request->input('qty');
 
-            if ($product->qty <= 0) {
+            // Menghapus item jika kuantitasnya 0 atau kurang
+            if ($newQty <= 0) {
                 $product->delete();
+                return response()->json(['success' => true, 'message' => 'Item berhasil dihapus']);
             } else {
+                // Update kuantitas jika lebih dari 0
+                $product->qty = $newQty;
                 $product->save();
+                return response()->json(['success' => true, 'message' => 'Kuantitas berhasil diperbarui']);
             }
         }
-        return redirect()->route('CashierView');
-    }
 
-    public function AddOrderItem($id)
-    {
-        $product = Order::where('id', $id)->first();
-
-        if ($product) {
-            $product->qty += 1;
-            $product->save();
-        }
-        return redirect()->route('CashierView');
+        return response()->json(['success' => false, 'message' => 'Item tidak ditemukan'], 404);
     }
 
     // public function MinOrderItemGuest($id) {
@@ -446,125 +469,138 @@ class CashierController extends Controller
     }
 
 
-    public function printInvoice($id)
-    {
-        // Temukan main order berdasarkan id dan muat relasi orders
-        $mainOrder = MainOrder::with('orders')->find($id);
+    // public function printInvoice($id)
+    // {
+    //     // Temukan main order berdasarkan id dan muat relasi orders
+    //     $mainOrder = MainOrder::with('orders')->find($id);
 
-        if (!$mainOrder) {
-            return response()->json(['error' => 'Invoice not found.'], 404);
-        }
+    //     if (!$mainOrder) {
+    //         return response()->json(['error' => 'Invoice not found.'], 404);
+    //     }
 
-        // Cetak invoice
-        $result = $this->printToThermalPrinter($mainOrder);
+    //     // Cetak invoice
+    //     $result = $this->printToThermalPrinter($mainOrder);
 
-        if ($result['success']) {
-            return response()->json(['success' => 'Invoice printed successfully!']);
-        } else {
-            return response()->json(['error' => $result['error']], 500);
-        }
+    //     if ($result['success']) {
+    //         return response()->json(['success' => 'Invoice printed successfully!']);
+    //     } else {
+    //         return response()->json(['error' => $result['error']], 500);
+    //     }
+    // }
+
+    // private function resizeImage($imagePath, $newWidth, $newHeight)
+    // {
+    //     list($width, $height) = getimagesize($imagePath);
+    //     $source = imagecreatefrompng($imagePath);
+    //     $newImage = imagecreatetruecolor($newWidth, $newHeight);
+
+    //     // Membuat latar belakang transparan (untuk PNG)
+    //     imagesavealpha($newImage, true);
+    //     $transparent = imagecolorallocatealpha($newImage, 0, 0, 0, 127);
+    //     imagefill($newImage, 0, 0, $transparent);
+
+    //     // Resize gambar
+    //     imagecopyresampled($newImage, $source, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+
+    //     // Simpan gambar yang diubah ukurannya
+    //     $resizedPath = public_path('assets/img/resized_logo.png');
+    //     imagepng($newImage, $resizedPath);
+
+    //     // Hapus memori gambar
+    //     imagedestroy($source);
+    //     imagedestroy($newImage);
+
+    //     return $resizedPath;
+    // }
+
+    // private function printToThermalPrinter($mainOrder)
+    // {
+    //     $connector = new WindowsPrintConnector("POS-801");
+    //     $printer = null;
+
+    //     try {
+    //         $printer = new Printer($connector);
+
+    //         // Memuat dan meresize gambar logo
+    //         $logoPath = public_path('assets/img/dapur_negeri.png');
+    //         $resizedLogoPath = $this->resizeImage($logoPath, 210, 175); // Resize ke 200x200 piksel (ukuran lebih besar)
+    //         $logo = EscposImage::load($resizedLogoPath, false); // Memuat gambar yang sudah di-resize
+
+    //         // Mengatur justifikasi menjadi tengah untuk gambar
+    //         $printer->setJustification(Printer::JUSTIFY_CENTER);
+    //         $printer->bitImageColumnFormat($logo, Printer::IMG_DEFAULT);
+
+    //         // Cetak detail order (tanpa tulisan INVOICE)
+    //         $printer->setJustification(Printer::JUSTIFY_LEFT);
+    //         $printer->setEmphasis(true);
+    //         $printer->text("-----------------------------\n");
+    //         $printer->setEmphasis(false);
+
+    //         // Cetak detail order
+    //         $printer->text("Invoice No    : {$mainOrder->id}\n");
+    //         $printer->text("Date          : {$mainOrder->created_at->format('d/m/Y')}\n");
+    //         $printer->text("Cashier       : {$mainOrder->cashier}\n");
+    //         $printer->text("Customer      : {$mainOrder->customer}\n");
+
+    //         // Tambahkan nomor meja jika ada
+    //         if (isset($mainOrder->table_number)) {
+    //             $printer->text("Table No      : {$mainOrder->table_number}\n");
+    //         }
+
+    //         $printer->text("Payment Method: " . ucfirst($mainOrder->payment) . "\n");
+
+    //         if ($mainOrder->payment === 'cash') {
+    //             $printer->text("Paid          : Rp" . number_format($mainOrder->cash, 0, ',', '.') . "\n");
+    //         } else {
+    //             $printer->text("Transfer Proof: See Attached\n");
+    //         }
+
+    //         // Cetak detail produk
+    //         $printer->text("-----------------------------\n");
+    //         foreach ($mainOrder->orders as $order) {
+    //             $productName = str_pad($order->product_name, 23);
+    //             $productPrice = "Rp" . number_format($order->product_price, 0, ',', '.');
+    //             $quantity = $order->qty;
+    //             $printer->text("{$productName}    : {$productPrice} * {$quantity}\n");
+    //         }
+
+    //         // Cetak total
+    //         $printer->text("-----------------------------\n");
+    //         $printer->text("Total         : Rp" . number_format($mainOrder->grandtotal, 0, ',', '.') . "\n");
+
+    //         if ($mainOrder->payment === 'cash') {
+    //             $printer->text("Cash Paid     : Rp" . number_format($mainOrder->cash, 0, ',', '.') . "\n");
+    //             $printer->text("Change        : Rp" . number_format($mainOrder->changes, 0, ',', '.') . "\n");
+    //         }
+
+    //         $printer->text("-----------------------------\n");
+    //         $printer->text("Thank you for your purchase!\n");
+
+    //         // Memotong kertas
+    //         $printer->cut();
+
+    //         return ['success' => true];
+    //     } catch (\Exception $e) {
+    //         return ['success' => false, 'error' => $e->getMessage()];
+    //     } finally {
+    //         if ($printer !== null) {
+    //             $printer->close(); // Pastikan selalu menutup koneksi
+    //         }
+    //     }
+    // }
+
+    public function showInvoice($id)
+{
+    // Temukan main order berdasarkan id dan muat relasi orders
+    $mainOrder = MainOrder::with('orders')->find($id);
+
+    if (!$mainOrder) {
+        abort(404, 'Invoice not found.');
     }
 
-    private function resizeImage($imagePath, $newWidth, $newHeight)
-    {
-        list($width, $height) = getimagesize($imagePath);
-        $source = imagecreatefrompng($imagePath);
-        $newImage = imagecreatetruecolor($newWidth, $newHeight);
-
-        // Membuat latar belakang transparan (untuk PNG)
-        imagesavealpha($newImage, true);
-        $transparent = imagecolorallocatealpha($newImage, 0, 0, 0, 127);
-        imagefill($newImage, 0, 0, $transparent);
-
-        // Resize gambar
-        imagecopyresampled($newImage, $source, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-
-        // Simpan gambar yang diubah ukurannya
-        $resizedPath = public_path('assets/img/resized_logo.png');
-        imagepng($newImage, $resizedPath);
-
-        // Hapus memori gambar
-        imagedestroy($source);
-        imagedestroy($newImage);
-
-        return $resizedPath;
-    }
-
-    private function printToThermalPrinter($mainOrder)
-    {
-        $connector = new WindowsPrintConnector("POS-801");
-        $printer = null;
-
-        try {
-            $printer = new Printer($connector);
-
-            // Memuat dan meresize gambar logo
-            $logoPath = public_path('assets/img/dapur_negeri.png');
-            $resizedLogoPath = $this->resizeImage($logoPath, 210, 175); // Resize ke 200x200 piksel (ukuran lebih besar)
-            $logo = EscposImage::load($resizedLogoPath, false); // Memuat gambar yang sudah di-resize
-
-            // Mengatur justifikasi menjadi tengah untuk gambar
-            $printer->setJustification(Printer::JUSTIFY_CENTER);
-            $printer->bitImageColumnFormat($logo, Printer::IMG_DEFAULT);
-
-            // Cetak detail order (tanpa tulisan INVOICE)
-            $printer->setJustification(Printer::JUSTIFY_LEFT);
-            $printer->setEmphasis(true);
-            $printer->text("-----------------------------\n");
-            $printer->setEmphasis(false);
-
-            // Cetak detail order
-            $printer->text("Invoice No    : {$mainOrder->id}\n");
-            $printer->text("Date          : {$mainOrder->created_at->format('d/m/Y')}\n");
-            $printer->text("Cashier       : {$mainOrder->cashier}\n");
-            $printer->text("Customer      : {$mainOrder->customer}\n");
-
-            // Tambahkan nomor meja jika ada
-            if (isset($mainOrder->table_number)) {
-                $printer->text("Table No      : {$mainOrder->table_number}\n");
-            }
-
-            $printer->text("Payment Method: " . ucfirst($mainOrder->payment) . "\n");
-
-            if ($mainOrder->payment === 'cash') {
-                $printer->text("Paid          : Rp" . number_format($mainOrder->cash, 0, ',', '.') . "\n");
-            } else {
-                $printer->text("Transfer Proof: See Attached\n");
-            }
-
-            // Cetak detail produk
-            $printer->text("-----------------------------\n");
-            foreach ($mainOrder->orders as $order) {
-                $productName = str_pad($order->product_name, 23);
-                $productPrice = "Rp" . number_format($order->product_price, 0, ',', '.');
-                $quantity = $order->qty;
-                $printer->text("{$productName}    : {$productPrice} * {$quantity}\n");
-            }
-
-            // Cetak total
-            $printer->text("-----------------------------\n");
-            $printer->text("Total         : Rp" . number_format($mainOrder->grandtotal, 0, ',', '.') . "\n");
-
-            if ($mainOrder->payment === 'cash') {
-                $printer->text("Cash Paid     : Rp" . number_format($mainOrder->cash, 0, ',', '.') . "\n");
-                $printer->text("Change        : Rp" . number_format($mainOrder->changes, 0, ',', '.') . "\n");
-            }
-
-            $printer->text("-----------------------------\n");
-            $printer->text("Thank you for your purchase!\n");
-
-            // Memotong kertas
-            $printer->cut();
-
-            return ['success' => true];
-        } catch (\Exception $e) {
-            return ['success' => false, 'error' => $e->getMessage()];
-        } finally {
-            if ($printer !== null) {
-                $printer->close(); // Pastikan selalu menutup koneksi
-            }
-        }
-    }
+    // Kirim data ke view untuk di-render
+    return view('Cashier.invoice', compact('mainOrder'));
+}
 
 
     public function testPrinterConnection()

@@ -3,7 +3,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <link rel="icon" href="{{ asset('assets/img/logo_bn.png')}}" type="image/png">
+    <link rel="icon" href="{{ asset('assets/img/lgobbn.png')}}" type="image/png">
     <title>Guest Order</title>
 
     <!-- Google Fonts -->
@@ -204,7 +204,7 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($order as $item)
-                                    <tr data-product-id="{{ $item->id }}">
+                                    <tr data-product-id="{{ $item->id }}">  
                                         <td>{{ $item->product_name }}</td>
                                         <td>{{ number_format($item->product_price) }}</td>
                                         <td>
