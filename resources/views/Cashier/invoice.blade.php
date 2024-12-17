@@ -78,7 +78,7 @@
             <p><strong>Invoice:</strong> {{ $mainOrder->id }}</p>
             <p><strong>Date:</strong> {{ $mainOrder->created_at->format('d/m/Y') }}</p>
             <p><strong>Cashier:</strong> {{ $mainOrder->cashier }}</p>
-            <p><strong>Customer:</strong> {{ $mainOrder->customer }}</p>
+            {{-- <p><strong>Customer:</strong> {{ $mainOrder->customer }}</p> --}}
             @if(isset($mainOrder->table_number))
                 <p><strong>Table No:</strong> {{ $mainOrder->table_number }}</p>
             @endif

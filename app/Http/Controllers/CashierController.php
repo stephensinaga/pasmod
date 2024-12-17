@@ -54,107 +54,107 @@ class CashierController extends Controller
         return view('Cashier.Cashier', compact('product', 'order', 'customers', 'invoice', 'category', 'categories'));
     }
 
-    public function GuestView(Request $request)
-    {
-        // Mengambil nomor meja dan nama customer dari session
-        $tableNumber = session('table_number');
-        $customerName = session('customer_name');
+    // public function GuestView(Request $request)
+    // {
+    //     // Mengambil nomor meja dan nama customer dari session
+    //     $tableNumber = session('table_number');
+    //     $customerName = session('customer_name');
 
-        $search = $request->input('search');
-        $category = $request->input('category');
+    //     $search = $request->input('search');
+    //     $category = $request->input('category');
 
-        $productQuery = Product::query(); // Mulai dari query builder
+    //     $productQuery = Product::query(); // Mulai dari query builder
 
-        // Filter produk berdasarkan pencarian
-        if ($search) {
-            $productQuery->where(function ($query) use ($search) {
-                $query->where('product_name', 'like', '%' . $search . '%')
-                    ->orWhere('product_code', 'like', '%' . $search . '%');
-            });
-        }
+    //     // Filter produk berdasarkan pencarian
+    //     if ($search) {
+    //         $productQuery->where(function ($query) use ($search) {
+    //             $query->where('product_name', 'like', '%' . $search . '%')
+    //                 ->orWhere('product_code', 'like', '%' . $search . '%');
+    //         });
+    //     }
 
-        // Filter produk berdasarkan kategori
-        if ($category) {
-            $productQuery->where('product_category', $category);
-        }
+    //     // Filter produk berdasarkan kategori
+    //     if ($category) {
+    //         $productQuery->where('product_category', $category);
+    //     }
 
-        $product = $productQuery->get(); // Batasi 12 produk per halaman
-        $categories = Category::all();
+    //     $product = $productQuery->get(); // Batasi 12 produk per halaman
+    //     $categories = Category::all();
 
-        // Mencari orders berdasarkan no_meja, customer_name, dan main_id yang null
-        $order = Order::where('no_meja', $tableNumber)
-            ->where('customer', $customerName) // Asumsi ada kolom customer_name di tabel orders
-            ->whereNull('main_id')
-            ->get();
+    //     // Mencari orders berdasarkan no_meja, customer_name, dan main_id yang null
+    //     $order = Order::where('no_meja', $tableNumber)
+    //         ->where('customer', $customerName) // Asumsi ada kolom customer_name di tabel orders
+    //         ->whereNull('main_id')
+    //         ->get();
 
-        // Ambil semua customer
-        $customers = Customer::all();
+    //     // Ambil semua customer
+    //     $customers = Customer::all();
 
-        return view('Guest.Cashier', compact('product', 'order', 'customers', 'category', 'categories', 'tableNumber', 'customerName'));
-    }
+    //     return view('Guest.Cashier', compact('product', 'order', 'customers', 'category', 'categories', 'tableNumber', 'customerName'));
+    // }
 
-    public function ListOrder()
-    {
-        $mainOrders = MainOrder::whereNull('cashier')->get();
-        return view('Cashier.ListOrder', compact('mainOrders'));
-    }
+    // public function ListOrder()
+    // {
+    //     $mainOrders = MainOrder::whereNull('cashier')->get();
+    //     return view('Cashier.ListOrder', compact('mainOrders'));
+    // }
 
 
-    public function SaveSession(Request $request)
-    {
-        $request->validate([
-            'table_number' => 'required|string',
-            'customer_name' => 'required|string',
-        ]);
+    // public function SaveSession(Request $request)
+    // {
+    //     $request->validate([
+    //         'table_number' => 'required|string',
+    //         'customer_name' => 'required|string',
+    //     ]);
 
-        // Simpan data ke session
-        session([
-            'table_number' => $request->table_number,
-            'customer_name' => $request->customer_name,
-        ]);
+    //     // Simpan data ke session
+    //     session([
+    //         'table_number' => $request->table_number,
+    //         'customer_name' => $request->customer_name,
+    //     ]);
 
-        // Kembalikan respon sukses
-        return response()->json(['success' => true]);
-    }
+    //     // Kembalikan respon sukses
+    //     return response()->json(['success' => true]);
+    // }
 
-    public function GuestOrder($id)
-    {
-        // Mengambil produk berdasarkan ID
-        $product = Product::where('id', $id)->first();
+    // public function GuestOrder($id)
+    // {
+    //     // Mengambil produk berdasarkan ID
+    //     $product = Product::where('id', $id)->first();
 
-        // Pastikan produk ditemukan
-        if ($product) {
-            // Mengambil nomor meja dari session
-            $tableNumber = session('table_number');
-            $customerName = session('customer_name');
+    //     // Pastikan produk ditemukan
+    //     if ($product) {
+    //         // Mengambil nomor meja dari session
+    //         $tableNumber = session('table_number');
+    //         $customerName = session('customer_name');
 
-            // Cek apakah produk sudah diorder sebelumnya
-            $checkItem = Order::where('product_id', $product->id)
-                ->where('no_meja', $tableNumber) // Cek berdasarkan no_meja juga
-                ->whereNull('main_id')
-                ->first();
+    //         // Cek apakah produk sudah diorder sebelumnya
+    //         $checkItem = Order::where('product_id', $product->id)
+    //             ->where('no_meja', $tableNumber) // Cek berdasarkan no_meja juga
+    //             ->whereNull('main_id')
+    //             ->first();
 
-            if ($checkItem) {
-                // Jika sudah diorder, tambahkan jumlahnya
-                $checkItem->qty += 1;
-                $checkItem->save();
-            } else {
-                // Jika belum diorder, buat order baru
-                $order = new Order();
-                $order->customer = $customerName;
-                $order->no_meja = $tableNumber;
-                $order->product_id = $product->id;
-                $order->product_name = $product->product_name;
-                $order->product_code = $product->product_code;
-                $order->product_category = $product->product_category;
-                $order->product_price = $product->product_price;
-                $order->qty = 1;
+    //         if ($checkItem) {
+    //             // Jika sudah diorder, tambahkan jumlahnya
+    //             $checkItem->qty += 1;
+    //             $checkItem->save();
+    //         } else {
+    //             // Jika belum diorder, buat order baru
+    //             $order = new Order();
+    //             $order->customer = $customerName;
+    //             $order->no_meja = $tableNumber;
+    //             $order->product_id = $product->id;
+    //             $order->product_name = $product->product_name;
+    //             $order->product_code = $product->product_code;
+    //             $order->product_category = $product->product_category;
+    //             $order->product_price = $product->product_price;
+    //             $order->qty = 1;
 
-                $order->save();
-            }
-        }
-        return back();
-    }
+    //             $order->save();
+    //         }
+    //     }
+    //     return back();
+    // }
 
 
     public function Order($id)
@@ -262,83 +262,83 @@ class CashierController extends Controller
     //     return response()->json(['error' => 'Product not found'], 404);
     // }
 
-    public function UpdateOrderItemQtyGuest(Request $request, $id)
-    {
-        $product = Order::where('id', $id)->first();
+    // public function UpdateOrderItemQtyGuest(Request $request, $id)
+    // {
+    //     $product = Order::where('id', $id)->first();
 
-        if ($product) {
-            $newQty = $request->input('qty');
-            if ($newQty > 0) {
-                $product->qty = $newQty; // Pastikan qty diperbarui
-                $product->save();
-                return response()->json(['new_qty' => $product->qty]);
-            } else {
-                $product->delete(); // Hapus produk jika qty = 0
-                return response()->json(['new_qty' => 0]);
-            }
-        }
-        return response()->json(['error' => 'Product not found'], 404);
-    }
+    //     if ($product) {
+    //         $newQty = $request->input('qty');
+    //         if ($newQty > 0) {
+    //             $product->qty = $newQty; // Pastikan qty diperbarui
+    //             $product->save();
+    //             return response()->json(['new_qty' => $product->qty]);
+    //         } else {
+    //             $product->delete(); // Hapus produk jika qty = 0
+    //             return response()->json(['new_qty' => 0]);
+    //         }
+    //     }
+    //     return response()->json(['error' => 'Product not found'], 404);
+    // }
 
-    public function GuestCheckOut(Request $request)
-    {
-        // Ambil no_meja dari request atau session
-        $tableNumber = $request->input('no_meja') ?? session('table_number');
+    // public function GuestCheckOut(Request $request)
+    // {
+    //     // Ambil no_meja dari request atau session
+    //     $tableNumber = $request->input('no_meja') ?? session('table_number');
 
-        // Pastikan bahwa no_meja ada, jika tidak, kembalikan error
-        if (!$tableNumber) {
-            return response()->json([
-                'message' => 'The given data was invalid.',
-                'errors' => ['no_meja' => ['The no meja field is required.']]
-            ], 422);
-        }
+    //     // Pastikan bahwa no_meja ada, jika tidak, kembalikan error
+    //     if (!$tableNumber) {
+    //         return response()->json([
+    //             'message' => 'The given data was invalid.',
+    //             'errors' => ['no_meja' => ['The no meja field is required.']]
+    //         ], 422);
+    //     }
 
-        $customerName = session('customer_name');
+    //     $customerName = session('customer_name');
 
-        // Generate no_invoice, incremented and reset every day
-        $today = Carbon::today(); // Use Carbon::today() to compare correctly with whereDate
-        $lastInvoice = MainOrder::whereDate('created_at', $today)->orderBy('no_invoice', 'desc')->first();
+    //     // Generate no_invoice, incremented and reset every day
+    //     $today = Carbon::today(); // Use Carbon::today() to compare correctly with whereDate
+    //     $lastInvoice = MainOrder::whereDate('created_at', $today)->orderBy('no_invoice', 'desc')->first();
 
-        // Increment invoice number
-        $noInvoice = $lastInvoice ? $lastInvoice->no_invoice + 1 : 1;
+    //     // Increment invoice number
+    //     $noInvoice = $lastInvoice ? $lastInvoice->no_invoice + 1 : 1;
 
-        // Get pending orders for the table
-        $orders = Order::where('no_meja', $tableNumber)->whereNull('main_id')->get();
+    //     // Get pending orders for the table
+    //     $orders = Order::where('no_meja', $tableNumber)->whereNull('main_id')->get();
 
-        if ($orders->isEmpty()) {
-            return response()->json(['error' => 'No orders found for this table.'], 404);
-        }
+    //     if ($orders->isEmpty()) {
+    //         return response()->json(['error' => 'No orders found for this table.'], 404);
+    //     }
 
-        // Calculate grand total
-        $grandtotal = 0;
+    //     // Calculate grand total
+    //     $grandtotal = 0;
 
-        // Loop through orders and calculate total
-        foreach ($orders as $order) {
-            $grandtotal += $order->qty * $order->product_price; // Menghitung total
-        }
+    //     // Loop through orders and calculate total
+    //     foreach ($orders as $order) {
+    //         $grandtotal += $order->qty * $order->product_price; // Menghitung total
+    //     }
 
-        // Create new main order for checkout
-        $Checkout = new MainOrder();
-        $Checkout->no_invoice = $noInvoice;
-        $Checkout->no_meja = $tableNumber;
-        $Checkout->customer = $customerName; // For guest
-        $Checkout->grandtotal = $grandtotal;
-        $Checkout->status = 'pending';
-        $Checkout->save();
+    //     // Create new main order for checkout
+    //     $Checkout = new MainOrder();
+    //     $Checkout->no_invoice = $noInvoice;
+    //     $Checkout->no_meja = $tableNumber;
+    //     $Checkout->customer = $customerName; // For guest
+    //     $Checkout->grandtotal = $grandtotal;
+    //     $Checkout->status = 'pending';
+    //     $Checkout->save();
 
-        // Update each order to link with main order
-        $mainOrderId = $Checkout->id;
+    //     // Update each order to link with main order
+    //     $mainOrderId = $Checkout->id;
 
-        foreach ($orders as $order) {
-            $order->main_id = $mainOrderId;
-            $order->save();
-        }
+    //     foreach ($orders as $order) {
+    //         $order->main_id = $mainOrderId;
+    //         $order->save();
+    //     }
 
-        return response()->json([
-            'message' => 'Guest checkout successful',
-            'invoice' => $Checkout,
-        ], 200);
-    }
+    //     return response()->json([
+    //         'message' => 'Guest checkout successful',
+    //         'invoice' => $Checkout,
+    //     ], 200);
+    // }
 
     public function CheckOut(Request $request)
     {
@@ -348,10 +348,10 @@ class CashierController extends Controller
             'transfer_proof' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
         ]);
 
-        $customer = Customer::firstOrCreate(
-            ['customer' => $request->customer_select == 'other' ? $request->customer : $request->customer_select],
-            ['customer' => $request->customer]
-        );
+        // $customer = Customer::firstOrCreate(
+        //     ['customer' => $request->customer_select == 'other' ? $request->customer : $request->customer_select],
+        //     ['customer' => $request->customer]
+        // );
 
         $orders = Order::whereNull('main_id')->get();
         $grandtotal = $orders->sum(function ($order) {
@@ -381,7 +381,7 @@ class CashierController extends Controller
         $Checkout->no_meja = $request->no_meja;
         $Checkout->no_invoice = $newInvoiceNumber; // Assign new invoice number
         $Checkout->cashier = $cashier->name;
-        $Checkout->customer = $customer->customer;
+        // $Checkout->customer = $customer->customer;
         $Checkout->grandtotal = $grandtotal;
         $Checkout->payment = $request->payment_type;
         $Checkout->cash = $cashGiven;
@@ -394,7 +394,7 @@ class CashierController extends Controller
 
         foreach ($orders as $order) {
             $order->main_id = $mainOrderId;
-            $order->customer = $customer->customer;
+            // $order->customer = $customer->customer;
             $order->no_meja = $request->no_meja;
             $order->save();
         }

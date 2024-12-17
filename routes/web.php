@@ -19,13 +19,13 @@ Route::middleware(['guest'])->group(function () {
         Route::get('logout', 'logout')->middleware('auth')->name('logout');
     });
 
-    Route::prefix('guest')->group(function () {
-        Route::post('save/session', [CashierController::class, 'SaveSession'])->name('SaveSession');
-        Route::get('cashier/view', [CashierController::class, 'GuestView'])->name('GuestCashierView');
-        Route::post('order/selected/product/{id}', [CashierController::class, 'GuestOrder'])->name('GuestOrder');
-        Route::post('checkout/selected/order', [CashierController::class, 'GuestCheckout'])->name('GuestCheckout');
-        Route::put('update/qty/order/{id}', [CashierController::class, 'UpdateOrderItemQtyGuest'])->name('UpdateOrderItemQtyGuest');
-    });
+    // Route::prefix('guest')->group(function () {
+    //     Route::post('save/session', [CashierController::class, 'SaveSession'])->name('SaveSession');
+    //     // Route::get('cashier/view', [CashierController::class, 'GuestView'])->name('GuestCashierView');
+    //     Route::post('order/selected/product/{id}', [CashierController::class, 'GuestOrder'])->name('GuestOrder');
+    //     Route::post('checkout/selected/order', [CashierController::class, 'GuestCheckout'])->name('GuestCheckout');
+    //     Route::put('update/qty/order/{id}', [CashierController::class, 'UpdateOrderItemQtyGuest'])->name('UpdateOrderItemQtyGuest');
+    // });
 });
 
 Route::controller(AuthController::class)->group(function () {
@@ -97,10 +97,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('cetak/invoice/{id}', [CashierController::class, 'showInvoice'])->name('PrintInvoice');
 
 
-        Route::get('list/pending/order', [CashierController::class, 'ListOrder'])->name('ListOrder');
-        Route::put('process/pending/order/{id}/{type}/{cash}/{img}', [CashierController::class, 'ProcessPendingOrder'])->name('ProcessPendingOrder');
-        Route::put('save/pending/order/{id}', [CashierController::class, 'SavePendingOrder'])->name('SavePendingOrder');
-        Route::post('upload-transfer-proof', [CashierController::class, 'uploadTransferProof'])->name('uploadTransferProof');
+        // Route::get('list/pending/order', [CashierController::class, 'ListOrder'])->name('ListOrder');
+        // Route::put('process/pending/order/{id}/{type}/{cash}/{img}', [CashierController::class, 'ProcessPendingOrder'])->name('ProcessPendingOrder');
+        // Route::put('save/pending/order/{id}', [CashierController::class, 'SavePendingOrder'])->name('SavePendingOrder');
+        // Route::post('upload-transfer-proof', [CashierController::class, 'uploadTransferProof'])->name('uploadTransferProof');
 
 
         // Laporan Penjualan

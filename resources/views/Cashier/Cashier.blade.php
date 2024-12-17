@@ -118,10 +118,10 @@
                                                     <th>Kasir:</th>
                                                     <td id="cashierName"></td>
                                                 </tr>
-                                                <tr>
+                                                {{-- <tr>
                                                     <th>Pelanggan:</th>
                                                     <td id="customerNames"></td>
-                                                </tr>
+                                                </tr> --}}
                                                 <tr>
                                                     <th>Total Harga:</th>
                                                     <td id="grandTotal"></td>
@@ -166,7 +166,7 @@
                                         placeholder="Input Table Number">
                                 </div>
                                 <br>
-                                <label for="customerSelect">Customer</label>
+                                {{-- <label for="customerSelect">Customer</label>
                                 <select class="form-control" id="customerSelect" name="customer_select">
                                     <option value="">Choose Customer</option>
                                     @foreach ($customers as $customer)
@@ -177,7 +177,7 @@
                                 <div id="manualEntry" class="manual-entry mt-2" style="display: none;">
                                     <label for="customerName">Enter Customer Name</label>
                                     <input type="text" class="form-control" id="customerName" name="customer">
-                                </div>
+                                </div> --}}
 
 
                                 <br>
@@ -221,10 +221,10 @@
                 $('.cash-section').hide();
                 $('.transfer-section').hide();
 
-                // Show manual entry based on customer selection
-                $('#customerSelect').on('change', function() {
-                    $('#manualEntry').toggle($(this).val() === 'other');
-                });
+                // // Show manual entry based on customer selection
+                // $('#customerSelect').on('change', function() {
+                //     $('#manualEntry').toggle($(this).val() === 'other');
+                // });
 
                 // Show cash input or transfer section based on payment type selection
                 $('#paymentType').on('change', function() {
@@ -380,7 +380,7 @@
             $('#invoiceId').text(invoice.id);
             $('#invoiceDate').text(new Date(invoice.created_at).toLocaleDateString());
             $('#cashierName').text(invoice.cashier);
-            $('#customerNames').text(invoice.customer);
+            // $('#customerNames').text(invoice.customer);
             $('#grandTotal').text('Rp ' + parseFloat(invoice.grandtotal).toLocaleString('id-ID', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2

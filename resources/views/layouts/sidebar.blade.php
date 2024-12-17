@@ -50,12 +50,12 @@ $user = Auth::user();
             </a>
         </li>
 
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link " href="{{ route('ListOrder') }}">
                 <i class="bi bi-file-text"></i>
                 <span>Pending Order</span>
             </a>
-        </li>
+        </li> --}}
 
         <li class="nav-item">
             <a class="nav-link " href="{{ route('HistoryPenjualanCashier') }}">

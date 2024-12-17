@@ -15,13 +15,6 @@ class UserTest extends Seeder
     public function run()
     {
         $UserData = [
-
-            [
-                'name' => 'Fitri',
-                'email' => 'fitri@gmail.com',
-                'password' => 'kasir123',
-                'role' => 'cashier'
-            ],
             [
                 'name' => 'Dev Cashier',
                 'email' => 'thanos@gmail.com',
@@ -29,27 +22,15 @@ class UserTest extends Seeder
                 'role' => 'cashier'
             ],
             [
-                'name' => 'Ara',
-                'email' => 'ara@gmail.com',
-                'password' => 'kasir123',
+                'name' => 'Cashier',
+                'email' => 'pasmod@gmail.com',
+                'password' => 'pasmod123',
                 'role' => 'cashier'
             ],
             [
-                'name' => 'Agni',
-                'email' => 'agni@gmail.com',
-                'password' => 'kasir123',
-                'role' => 'cashier'
-            ],
-            [
-                'name' => 'Admin',
-                'email' => 'admin@gmail.com',
-                'password' => 'admin123',
-                'role' => 'admin'
-            ],
-            [
-                'name' => 'Dev Admin',
-                'email' => 'gatot@gmail.com',
-                'password' => 'BN123',
+                'name' => 'Wologito',
+                'email' => 'wologitosmg168@gmail.com',
+                'password' => 'wologito168',
                 'role' => 'admin'
             ],
         ];
