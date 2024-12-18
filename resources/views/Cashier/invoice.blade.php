@@ -112,14 +112,4 @@
     </div>
 </body>
 </html>
-<script>
-    window.onload = function() {
-        window.print();
 
-        // Redirect ke halaman cashier setelah selesai
-        setTimeout(function() {
-            window.opener.location.href = '/cashier/view'; // Ganti '/cashier' dengan URL cashier Anda
-            window.close(); // Tutup tab cetak
-        }, 1000);
-    }
-</script>
