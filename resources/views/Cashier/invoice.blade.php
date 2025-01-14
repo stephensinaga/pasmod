@@ -76,7 +76,7 @@
         <!-- Detail Invoice -->
         <div class="details">
             <p><strong>Invoice:</strong> {{ $mainOrder->id }}</p>
-            <p><strong>Date:</strong> {{ $mainOrder->created_at->format('d/m/Y') }}</p>
+            <p><strong>Date:</strong> {{ $mainOrder->created_at->format('d/m/Y H:i') }}</p>
             <p><strong>Cashier:</strong> {{ $mainOrder->cashier }}</p>
             {{-- <p><strong>Customer:</strong> {{ $mainOrder->customer }}</p> --}}
             @if(isset($mainOrder->table_number))

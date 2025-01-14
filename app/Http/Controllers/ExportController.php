@@ -151,7 +151,7 @@ class ExportController extends Controller
             $sheet->setCellValue('F' . $row, 'Rp ' . number_format($mainOrder->cash, 0, ',', '.'));
             $sheet->setCellValue('G' . $row, 'Rp ' . number_format($mainOrder->changes, 0, ',', '.'));
             $sheet->setCellValue('H' . $row, ucfirst($mainOrder->status));
-            $sheet->setCellValue('I' . $row, $mainOrder->created_at->format('d M Y'));
+            $sheet->setCellValue('I' . $row, $mainOrder->created_at->format('d M Y H:i:s'));
             $sheet->setCellValue('J' . $row, $items);
 
             // Tambahkan total grandtotal

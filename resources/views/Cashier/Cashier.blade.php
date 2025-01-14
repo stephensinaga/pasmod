@@ -118,10 +118,6 @@
                                                     <th>Kasir:</th>
                                                     <td id="cashierName"></td>
                                                 </tr>
-                                                {{-- <tr>
-                                                    <th>Pelanggan:</th>
-                                                    <td id="customerNames"></td>
-                                                </tr> --}}
                                                 <tr>
                                                     <th>Total Harga:</th>
                                                     <td id="grandTotal"></td>
@@ -166,21 +162,7 @@
                                         placeholder="Input Table Number">
                                 </div>
                                 <br>
-                                {{-- <label for="customerSelect">Customer</label>
-                                <select class="form-control" id="customerSelect" name="customer_select">
-                                    <option value="">Choose Customer</option>
-                                    @foreach ($customers as $customer)
-                                    <option value="{{ $customer->customer }}">{{ $customer->customer }}</option>
-                                    @endforeach
-                                    <option value="other">Other (fill manual)</option>
-                                </select>
-                                <div id="manualEntry" class="manual-entry mt-2" style="display: none;">
-                                    <label for="customerName">Enter Customer Name</label>
-                                    <input type="text" class="form-control" id="customerName" name="customer">
-                                </div> --}}
 
-
-                                <br>
                                 <label for="paymentType">Payment Type</label>
                                 <select class="form-control" id="paymentType" name="payment_type">
                                     <option value="">Choose Payment Type</option>
@@ -220,11 +202,6 @@
                 $('#manualEntry').hide();
                 $('.cash-section').hide();
                 $('.transfer-section').hide();
-
-                // // Show manual entry based on customer selection
-                // $('#customerSelect').on('change', function() {
-                //     $('#manualEntry').toggle($(this).val() === 'other');
-                // });
 
                 // Show cash input or transfer section based on payment type selection
                 $('#paymentType').on('change', function() {

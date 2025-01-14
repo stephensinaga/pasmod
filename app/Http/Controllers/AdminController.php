@@ -210,6 +210,8 @@ class AdminController extends Controller
         })
         ->get();
 
-        return view('Admin.laporanPenjualan', compact('mainOrders', 'cashiers'));
+        $totalGrandTotal = $mainOrders->sum('grandtotal');
+
+        return view('Admin.laporanPenjualan', compact('mainOrders', 'cashiers', 'totalGrandTotal'));
     }
 }

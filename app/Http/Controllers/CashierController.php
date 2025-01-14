@@ -79,7 +79,7 @@ class CashierController extends Controller
 
         return back();
     }
-    
+
     public function updateOrderItem(Request $request, $id)
     {
         $product = Order::where('id', $id)->first();
@@ -130,7 +130,10 @@ class CashierController extends Controller
         $cashier = Auth::user();
 
         // Generate invoice number
-        $today = now()->format('Y-m-d');
+        $now = Carbon::now('Asia/Jakarta');
+        $today = $now->format('Y-m-d'); // Format tanggal saja
+        $timeNow = $now->format('H:i:s'); // Format waktu saja
+
         // Cari pesanan terakhir pada hari ini
         $lastOrder = MainOrder::whereDate('created_at', $today)->orderBy('id', 'desc')->first();
         $newInvoiceNumber = $lastOrder ? ($lastOrder->no_invoice + 1) : 1;
@@ -145,6 +148,9 @@ class CashierController extends Controller
         $Checkout->changes = max($changes, 0);
         $Checkout->transfer_image = $transferImage;
         $Checkout->status = 'checkout';
+
+        // Simpan dengan tanggal dan waktu saat ini
+        $Checkout->created_at = $now; // Tanggal dan waktu sekarang
         $Checkout->save();
 
         $mainOrderId = $Checkout->id;
@@ -160,65 +166,7 @@ class CashierController extends Controller
         return response()->json([
             'message' => 'Checkout berhasil',
             'invoice' => $invoice,
-        ], 200);
-    }
-
-    public function SavePendingOrder(Request $request, $id)
-    {
-        $order = MainOrder::findOrFail($id);
-        $cashier = Auth::user();
-
-        if (!$cashier) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
-
-        // Inisialisasi variabel untuk tipe pembayaran, uang yang diberikan, dan kembalian
-        $type = $request->payment_type;
-        $cashGiven = null;
-        $changes = null;
-
-        // Cek metode pembayaran
-        if ($type === 'transfer') {
-            // Jika metode pembayaran transfer, cashGiven dan changes tetap null
-        } else {
-            // Jika metode pembayaran cash, hitung perubahan
-            $cashGiven = $request->cash;
-
-            // Validasi jumlah uang yang diberikan lebih besar dari atau sama dengan grandtotal
-            if ($cashGiven < $order->grandtotal) {
-                return response()->json(['error' => 'Cash given is less than total amount'], 400);
-            }
-
-            // Hitung perubahan
-            $changes = $cashGiven - $order->grandtotal;
-        }
-
-        // Update data order berdasarkan input
-        $order->cashier = $cashier->name; // Simpan nama kasir yang menangani
-        $order->payment = $type;          // Simpan tipe pembayaran
-        $order->cash = $cashGiven;         // Simpan uang yang diberikan (jika cash)
-        $order->changes = $changes;        // Simpan perubahan (jika cash)
-
-        // Proses upload gambar bukti transfer jika ada
-        if ($request->hasFile('img')) {
-            $transfer = $request->file('img'); // Ambil file gambar
-            $transferImageName = time() . '_' . $transfer->getClientOriginalName(); // Generate nama file unik
-
-            // Simpan gambar langsung ke public/bukti_transfer
-            $transfer->move(public_path('bukti_transfer'), $transferImageName);
-
-            // Simpan path gambar transfer di database, tanpa "public/" di depannya
-            $order->transfer_image = 'bukti_transfer/' . $transferImageName;
-        }
-
-        // Update status menjadi 'checkout'
-        $order->status = 'checkout';
-        $order->save(); // Simpan perubahan ke database
-
-        // Kembalikan respons JSON sukses dengan data invoice/order
-        return response()->json([
-            'message' => 'Order processed successfully',
-            'invoice' => $order, // Kirim seluruh data order sebagai respons
+            'checkout_time' => $now->toDateTimeString(), // Tampilkan waktu lengkap saat checkout
         ], 200);
     }
 

@@ -84,6 +84,10 @@
                 </div>
             </form>
 
+            <div class="text-right">
+                <h4>Total Grand Total: Rp {{ number_format($totalGrandTotal, 0, ',', '.') }}</h4>
+            </div>
+
             <!-- Data Table -->
             <table class="table table-bordered table-striped">
                 <thead>
@@ -117,7 +121,7 @@
                                 N/A
                             @endif
                             </td>
-                            <td>{{ $order->created_at->format('d M Y') }}</td>
+                            <td>{{ $order->created_at->format('d M Y H:i:s') }}</td>
                             <td>
                                 <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#detailModal{{ $order->id }}" data-id="{{ $order->id }}">Detail</button>
                             </td>
