@@ -29,7 +29,6 @@
     @foreach ($mainOrders as $mainOrder)
         <h2>Main Order #{{ $mainOrder->id }}</h2>
         <p>Cashier: {{ $mainOrder->cashier }}</p>
-        <p>Customer: {{ $mainOrder->customer }}</p>
         <p>Grand Total: {{ $mainOrder->grandtotal }}</p>
         @if ($mainOrder->payment == 'cash')
             <p>Cash: {{ $mainOrder->cash }}</p>

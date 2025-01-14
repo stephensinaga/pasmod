@@ -25,7 +25,7 @@ class ExportController extends Controller
 
         // Tambahkan header dengan tanggal hari ini
         $sheet->setCellValue('A1', 'Laporan Penjualan Harian - ' . $today);
-        $sheet->mergeCells('A1:J1'); // Gabungkan sel untuk header
+        $sheet->mergeCells('A1:I1'); // Gabungkan sel untuk header
         $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
         $sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
@@ -33,14 +33,12 @@ class ExportController extends Controller
         $sheet->setCellValue('A2', 'No');
         $sheet->setCellValue('B2', 'ID');
         $sheet->setCellValue('C2', 'Cashier');
-        $sheet->setCellValue('D2', 'Customer');
-        $sheet->setCellValue('E2', 'Grand Total');
-        $sheet->setCellValue('F2', 'Payment Method');
-        $sheet->setCellValue('G2', 'Cash');
-        $sheet->setCellValue('H2', 'Changes');
-        $sheet->setCellValue('I2', 'Status');
-        $sheet->setCellValue('J2', 'Order Date');
-
+        $sheet->setCellValue('D2', 'Grand Total');
+        $sheet->setCellValue('E2', 'Payment Method');
+        $sheet->setCellValue('F2', 'Cash');
+        $sheet->setCellValue('G2', 'Changes');
+        $sheet->setCellValue('H2', 'Status');
+        $sheet->setCellValue('I2', 'Order Date');
         // Ambil data penjualan harian
         $orders = MainOrder::whereDate('created_at', today())->get();
 
@@ -51,24 +49,23 @@ class ExportController extends Controller
             $sheet->setCellValue('A' . $row, $no);
             $sheet->setCellValue('B' . $row, $order->id);
             $sheet->setCellValue('C' . $row, $order->cashier);
-            $sheet->setCellValue('D' . $row, $order->customer);
-            $sheet->setCellValue('E' . $row, 'Rp ' . number_format($order->grandtotal, 0, ',', '.'));
-            $sheet->setCellValue('F' . $row, ucfirst($order->payment));
-            $sheet->setCellValue('G' . $row, 'Rp ' . number_format($order->cash, 0, ',', '.'));
-            $sheet->setCellValue('H' . $row, 'Rp ' . number_format($order->changes, 0, ',', '.'));
-            $sheet->setCellValue('I' . $row, ucfirst($order->status));
-            $sheet->setCellValue('J' . $row, $order->created_at->format('d M Y'));
+            $sheet->setCellValue('D' . $row, 'Rp ' . number_format($order->grandtotal, 0, ',', '.'));
+            $sheet->setCellValue('E' . $row, ucfirst($order->payment));
+            $sheet->setCellValue('F' . $row, 'Rp ' . number_format($order->cash, 0, ',', '.'));
+            $sheet->setCellValue('G' . $row, 'Rp ' . number_format($order->changes, 0, ',', '.'));
+            $sheet->setCellValue('H' . $row, ucfirst($order->status));
+            $sheet->setCellValue('I' . $row, $order->created_at->format('d M Y'));
 
             // Styling untuk setiap baris data
-            $sheet->getStyle('A' . $row . ':J' . $row)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
-            $sheet->getStyle('A' . $row . ':J' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('A' . $row . ':I' . $row)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+            $sheet->getStyle('A' . $row . ':I' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
             $row++;
             $no++; // Increment nomor urut
         }
 
         // Auto-size kolom
-        foreach (range('A', 'J') as $columnID) {
+        foreach (range('A', 'I') as $columnID) {
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
 
@@ -105,39 +102,13 @@ class ExportController extends Controller
         $sheet->setCellValue('A2', 'No');
         $sheet->setCellValue('B2', 'ID');
         $sheet->setCellValue('C2', 'Cashier');
-        $sheet->setCellValue('D2', 'Customer');
-        $sheet->setCellValue('E2', 'Grand Total');
-        $sheet->setCellValue('F2', 'Payment Method');
-        $sheet->setCellValue('G2', 'Cash');
-        $sheet->setCellValue('H2', 'Changes');
-        $sheet->setCellValue('I2', 'Status');
-        $sheet->setCellValue('J2', 'Order Date');
-
-        // Tambahkan filter berdasarkan permintaan
-        $filterRow = 2; // Baris untuk menampilkan filter di kolom L dan M
-        if ($request->filled('payment_method')) {
-            $sheet->setCellValue('L' . $filterRow, 'Filter Metode Pembayaran:');
-            $sheet->setCellValue('M' . $filterRow, ucfirst($request->payment_method));
-            $filterRow++;
-        }
-
-        if ($request->filled('cashier')) {
-            $sheet->setCellValue('L' . $filterRow, 'Filter Cashier:');
-            $sheet->setCellValue('M' . $filterRow, $request->cashier);
-            $filterRow++;
-        }
-
-        if ($request->filled('date')) {
-            $sheet->setCellValue('L' . $filterRow, 'Filter Tanggal:');
-            $sheet->setCellValue('M' . $filterRow, $request->date);
-            $filterRow++;
-        }
-
-        if ($request->filled('start_date') && $request->filled('end_date')) {
-            $sheet->setCellValue('L' . $filterRow, 'Filter Rentang Tanggal:');
-            $sheet->setCellValue('M' . $filterRow, $request->start_date . ' s/d ' . $request->end_date);
-            $filterRow++;
-        }
+        $sheet->setCellValue('D2', 'Grand Total');
+        $sheet->setCellValue('E2', 'Payment Method');
+        $sheet->setCellValue('F2', 'Cash');
+        $sheet->setCellValue('G2', 'Changes');
+        $sheet->setCellValue('H2', 'Status');
+        $sheet->setCellValue('I2', 'Order Date');
+        $sheet->setCellValue('J2', 'Items');
 
         // Mulai query untuk MainOrder, dengan filter
         $mainOrdersQuery = MainOrder::query();
@@ -151,42 +122,47 @@ class ExportController extends Controller
             $mainOrdersQuery->whereDate('created_at', $request->date);
         }
         if ($request->has('start_date') && $request->has('end_date')) {
-            $mainOrdersQuery->whereBetween('created_at', [$request->start_date, $request->end_date]);
+            $start_date = $request->start_date;
+            $end_date = Carbon::parse($request->end_date)->endOfDay(); // Tambahkan waktu akhir hari
+            $mainOrdersQuery->whereBetween('created_at', [$start_date, $end_date]);
         }
 
         // Ambil data penjualan sesuai filter
-        $orders = $mainOrdersQuery->get();
+        $mainOrders = $mainOrdersQuery->with('orders')->get();
 
         // Inisialisasi variabel untuk menghitung total
         $totalGrandTotal = 0;
-        $totalKeuntungan = 0;
-        $itemPenjualan = [];
 
         // Isi data ke dalam Excel
         $row = 3; // Mulai dari baris ketiga setelah header
         $no = 1;  // Nomor urut
-        foreach ($orders as $order) {
+        foreach ($mainOrders as $mainOrder) {
+            // Gabungkan nama barang dan kuantitas
+            $items = $mainOrder->orders->map(function ($order) {
+                return $order->product_name . ' * ' . $order->qty;
+            })->implode(', ');
+
+            // Isi data
             $sheet->setCellValue('A' . $row, $no);
-            $sheet->setCellValue('B' . $row, $order->id);
-            $sheet->setCellValue('C' . $row, $order->cashier);
-            $sheet->setCellValue('D' . $row, $order->customer);
-            $sheet->setCellValue('E' . $row, 'Rp ' . number_format($order->grandtotal, 0, ',', '.'));
-            $sheet->setCellValue('F' . $row, ucfirst($order->payment));
-            $sheet->setCellValue('G' . $row, 'Rp ' . number_format($order->cash, 0, ',', '.'));
-            $sheet->setCellValue('H' . $row, 'Rp ' . number_format($order->changes, 0, ',', '.'));
-            $sheet->setCellValue('I' . $row, ucfirst($order->status));
-            $sheet->setCellValue('J' . $row, $order->created_at->format('d M Y'));
+            $sheet->setCellValue('B' . $row, $mainOrder->id);
+            $sheet->setCellValue('C' . $row, $mainOrder->cashier);
+            $sheet->setCellValue('D' . $row, 'Rp ' . number_format($mainOrder->grandtotal, 0, ',', '.'));
+            $sheet->setCellValue('E' . $row, ucfirst($mainOrder->payment));
+            $sheet->setCellValue('F' . $row, 'Rp ' . number_format($mainOrder->cash, 0, ',', '.'));
+            $sheet->setCellValue('G' . $row, 'Rp ' . number_format($mainOrder->changes, 0, ',', '.'));
+            $sheet->setCellValue('H' . $row, ucfirst($mainOrder->status));
+            $sheet->setCellValue('I' . $row, $mainOrder->created_at->format('d M Y'));
+            $sheet->setCellValue('J' . $row, $items);
 
             // Tambahkan total grandtotal
-            $totalGrandTotal += $order->grandtotal;
-
-            // // Tambahkan perhitungan keuntungan (asumsi ada kolom profit di MainOrder)
-            // $totalKeuntungan += $order->profit;
-
+            $totalGrandTotal += $mainOrder->grandtotal;
 
             // Styling untuk setiap baris data
-            $sheet->getStyle('A' . $row . ':J' . $row)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
-            $sheet->getStyle('A' . $row . ':J' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('A' . $row . ':I' . $row)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+            $sheet->getStyle('A' . $row . ':I' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+            // Hanya styling border pada kolom J, tanpa pengaturan center
+            $sheet->getStyle('J' . $row)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
 
             $row++;
             $no++; // Increment nomor urut
@@ -197,29 +173,12 @@ class ExportController extends Controller
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
 
-        $sheet->getColumnDimension('L')->setAutoSize(true);
-        $sheet->getColumnDimension('M')->setAutoSize(true);
-
-        // // Tambahkan keterangan total keuntungan dan total penjualan setelah data
-        // $sheet->setCellValue('A' . $row, 'Total Keuntungan');
-        // $sheet->mergeCells('A' . $row . ':D' . $row);
-        // $sheet->setCellValue('E' . $row, 'Rp ' . number_format($totalKeuntungan, 0, ',', '.'));
-
-        // Total Grand Total langsung di L3 dan M3
-        $sheet->setCellValue('L3', 'Total Penjualan: ');
-        $sheet->mergeCells('L3:M3'); // Gabungkan sel untuk label
-        $sheet->setCellValue('O3', 'Rp ' . number_format($totalGrandTotal, 0, ',', '.'));
-
-
-        $row += 2;
-        $sheet->setCellValue('A' . $row, 'Detail Penjualan Setiap Item');
-        $sheet->mergeCells('A' . $row . ':E' . $row);
-        $sheet->getStyle('A' . $row)->getFont()->setBold(true);
-
-        $row++;
+        // Tambahkan total grand total
+        $sheet->setCellValue('I' . $row, 'Total Penjualan:');
+        $sheet->setCellValue('J' . $row, 'Rp ' . number_format($totalGrandTotal, 0, ',', '.'));
 
         // Simpan Excel dengan nama file yang mengandung tanggal hari ini
-        $fileName = 'Laporan_Penjualans_' . Carbon::now()->format('d_m_Y') . '.xlsx';
+        $fileName = 'Laporan_Penjualan_' . Carbon::now()->format('d_m_Y') . '.xlsx';
         $filePath = storage_path($fileName);
 
         $writer = new Xlsx($spreadsheet);
