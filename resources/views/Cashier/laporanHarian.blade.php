@@ -22,21 +22,6 @@
                         </div>
                     </div>
 
-                    <!-- Customer Filter -->
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="customer">Customer</label>
-                            <select class="form-control form-control-sm" id="customer" name="customer">
-                                <option value="">All</option>
-                                @foreach ($customers as $customer)
-                                    <option value="{{ $customer }}"
-                                        {{ request('customer') == $customer ? 'selected' : '' }}>{{ $customer }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
                     <!-- Submit Button -->
                     <div class="col-md-2">
                         <div class="form-group">
@@ -61,7 +46,6 @@
                     <tr>
                         <th>ID</th>
                         <th>Cashier</th>
-                        <th>Customer</th>
                         <th>Grand Total</th>
                         <th>Payment Method</th>
                         <th>Cash</th>
@@ -77,7 +61,6 @@
                         <tr>
                             <td>{{ $order->id }}</td>
                             <td>{{ $order->cashier }}</td>
-                            <td>{{ $order->customer }}</td>
                             <td>{{ number_format($order->grandtotal, 0, ',', '.') }}</td>
                             <td>{{ ucfirst($order->payment) }}</td>
                             <td>{{ number_format($order->cash, 0, ',', '.') }}</td>
@@ -90,7 +73,7 @@
                                     N/A
                                 @endif
                             </td>
-                            <td>{{ $order->created_at->format('d M Y') }}</td>
+                            <td>{{ $order->created_at->format('d M Y H:i:s') }}</td>
                             <td>
                                 <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#detailModal"
                                     data-id="{{ $order->id }}">Detail</button>
