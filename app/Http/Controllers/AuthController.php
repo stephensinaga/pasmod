@@ -31,7 +31,7 @@ class AuthController extends Controller
             ]);
         }
 
-        if (Auth::user()->role !== 'cashier') {
+        if (!in_array(Auth::user()->role, ['cashier', 'admin'])) {
             Auth::logout();
             throw ValidationException::withMessages([
                 'email' => 'You do not have the required access rights.',
@@ -66,7 +66,7 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:6|confirmed',
         ]);
 
         User::create([
@@ -101,7 +101,7 @@ class AuthController extends Controller
                 'max:255',
                 Rule::unique('users')->ignore($cashier->id),
             ],
-            'password' => 'nullable|string|min:8|confirmed',
+            'password' => 'nullable|string|min:6|confirmed',
         ]);
 
         $cashier->update([
