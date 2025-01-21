@@ -54,17 +54,19 @@
         </a>
 
         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-            <li class="dropdown-header">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">
-					<small>{{ auth()->user()->level }}</small>
-				</span>
-            </li>
-
+        @if(auth()->user() && auth()->user()->role === 'admin')
             <li>
-            <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}">
-                <i class="bi bi-box-arrow-right"></i>
-                <span>Sign Out</span>
-            </a>
+                <a class="dropdown-item d-flex align-items-center" href="{{ route('cashiers.show') }}">
+                    <i class="bi bi-person-plus"></i>
+                    <span>Add Account</span>
+                </a>
+            </li>
+        @endif
+            <li>
+                <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Sign Out</span>
+                </a>
             </li>
 
         </ul>

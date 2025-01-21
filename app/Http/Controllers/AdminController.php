@@ -214,4 +214,6 @@ class AdminController extends Controller
 
         return view('Admin.laporanPenjualan', compact('mainOrders', 'cashiers', 'totalGrandTotal'));
     }
+
+    
 }

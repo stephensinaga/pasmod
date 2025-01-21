@@ -36,6 +36,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('edit/product/view/{id}', [AdminController::class, 'EditProductView'])->name('EditProductView');
         Route::put('edit/product/{id}', [AdminController::class, 'EditProduct'])->name('EditProductProcess');
 
+        Route::prefix('addCashier')->group(function () {
+            Route::get('/cashiers', [AuthController::class, 'show'])->name('cashiers.show');
+            Route::post('/cashiers', [AuthController::class, 'store'])->name('cashiers.store');
+            Route::get('/cashiers/{cashier}/edit', [AuthController::class, 'edit'])->name('cashiers.edit');
+            Route::put('/cashiers/{cashier}', [AuthController::class, 'update'])->name('cashiers.update');
+            Route::delete('/cashiers/{cashier}', [AuthController::class, 'destroy'])->name('cashiers.destroy');
+        });
+
         // Laporan & Export
         Route::get('export/laporan/pdf', [AdminController::class, 'ExportLaporanPDF'])->name('ExportLaporanPDF');
         Route::get('laporan/view', [AdminController::class, 'SalesReport'])->name('SalesReportView');

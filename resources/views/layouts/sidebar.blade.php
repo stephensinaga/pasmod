@@ -50,13 +50,6 @@ $user = Auth::user();
             </a>
         </li>
 
-        {{-- <li class="nav-item">
-            <a class="nav-link " href="{{ route('ListOrder') }}">
-                <i class="bi bi-file-text"></i>
-                <span>Pending Order</span>
-            </a>
-        </li> --}}
-
         <li class="nav-item">
             <a class="nav-link " href="{{ route('HistoryPenjualanCashier') }}">
                 <i class="bi bi-calendar-check"></i>
@@ -72,6 +65,12 @@ $user = Auth::user();
                 <span>Sales Report</span>
             </a>
         </li>
+        {{-- <li class="nav-item">
+            <a class="nav-link" href="">
+                <i class="bi bi-person-plus"></i>
+                <span>Add Account</span>
+            </a>
+        </li> --}}
         @endif
 
     </ul>
