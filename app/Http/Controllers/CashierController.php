@@ -180,7 +180,7 @@ class CashierController extends Controller
         }
 
         // Kirim data ke view untuk di-render
-        return view('Cashier.invoice', compact('mainOrder'));
+        return view('struk.invoice', compact('mainOrder'));
     }
 
 }
