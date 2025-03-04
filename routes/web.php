@@ -70,6 +70,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('add/item', [PoController::class,'AddOrder'])->name('AddPoOrder');
             Route::delete('delete/item/{id}', [PoController::class,'Delete'])->name('DeletePoOrder');
             Route::post('proccess/order', [PoController::class, 'ProccessOrder'])->name('ProcessPoPendingOrder');
+            Route::get('/preorders/orders', [PoController::class, 'PoView'])->name('preorders');
         });
 
         // Stock

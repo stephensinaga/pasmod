@@ -43,6 +43,11 @@ class PoController extends Controller
         return back();
     }
 
+    public function PoView(){
+        $data = PreOrder::with('poItems');
+        return view('admin.po.view', compact('data'));
+    }
+
     public function ProccessOrder(Request $request)
     {
         $ids = $request->input('ids');

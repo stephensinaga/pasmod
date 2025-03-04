@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BelanjaMingguan;
 use App\Models\Material;
+use App\Models\PreOrder;
 use App\Models\Stock;
 use App\Models\Unit;
 use App\Models\WeeklyReceipts;
@@ -257,6 +258,8 @@ class StockController extends Controller
         $pending = WeeklyReceipts::where('type', 'stock')->where('status', 'pending')->get();
         return view('Admin.Stock.WeeklyReceipts', compact('material', 'unit', 'pending'));
     }
+
+
 
     public function InReceipts(Request $request)
     {

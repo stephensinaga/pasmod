@@ -40,6 +40,14 @@ $user = Auth::user();
                 <span>Pre Order</span>
             </a>
         </li>
+
+        <li class="nav-item">
+            <a class="nav-link " href="{{ route('preorders') }}">
+                <i class="bi bi-card-heading"></i>
+                <span>Report PO</span>
+            </a>
+        </li>
+
         @endif
 
         @if ($user->role === 'cashier')
